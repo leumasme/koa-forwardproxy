@@ -1,18 +1,29 @@
 {
-  "name": "typescript-template",
-  "version": "1.0.0",
-  "description": "A Template for a generic TypeScript project",
+  "name": "koa-forwardproxy",
+  "version": "0.1.0",
+  "description": "Forward recieved requests to a different server",
   "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "bugs": {
+      "url": "https://github.com/leumasme/koa-forwardproxy/issues"
+  },
+  "keywords": [
+      "koa",
+      "proxy",
+      "forward",
+      "redirect"
+  ],
+  "repository": {
+      "type": "git",
+      "url": "github:leumasme/koa-forwardproxy"
+  },
   "scripts": {
-    "build": "npx tsc",
-    "start": "npx tsc && node build/index.js",
-    "dev": "npx tsnd --respawn --clear src/index.ts"
+    "build": "npx tsc"
   },
   "author": "Temm",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^14.14.34",
-    "ts-node-dev": "^1.1.6",
     "typescript": "^4.2.3"
   }
 }
