@@ -39,7 +39,7 @@ function proxy(options: ProxyOptions): Middleware {
             }
             try {
                 let cfvisotor = JSON.parse(ctx.request.headers["cf-visitor"] as string);
-                patchedUrl.protocol = JSON.parse(cfvisotor).scheme + ":"
+                patchedUrl.protocol = cfvisotor.scheme + ":"
             } catch (e) {
                 log("cf-visitor", ctx.request.headers["cf-visitor"], e)
             }
