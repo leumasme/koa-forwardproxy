@@ -2,12 +2,16 @@ import { Middleware } from "koa"
 import axios, { Method } from "axios"
 import decompress from "inflation";
 import raw from "raw-body";
+import debug from "debug";
+
+let log = debug("forwardproxy")
 
 function proxy(options: ProxyOptions): Middleware {
     return async function (ctx) {
         let body = await raw(decompress(ctx.req));
-
+        
         let url = `${ctx.protocol}://${ctx.host}${ctx.url}`;
+        log("url-before", url)
         if (options) {
             if ("host" in options) {
                 let u = new URL(url);
@@ -17,7 +21,8 @@ function proxy(options: ProxyOptions): Middleware {
                 url = options.remap(url)
             }
         }
-
+        log("url-after", url)
+        
         let response = await axios({
             method: ctx.method as Method,
             url: url,

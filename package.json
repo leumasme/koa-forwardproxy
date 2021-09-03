@@ -14,7 +14,7 @@
     "redirect"
   ],
   "files": [
-      "build"
+    "build"
   ],
   "repository": {
     "type": "git",
@@ -32,9 +32,11 @@
     "typescript": "^4.2.3"
   },
   "dependencies": {
+    "@types/debug": "^4.1.7",
     "@types/inflation": "^2.0.1",
     "@types/koa": "^2.13.4",
     "axios": "^0.21.1",
+    "debug": "^3.1.0",
     "inflation": "^2.0.0",
     "raw-body": "^2.4.1"
   }
