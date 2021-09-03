@@ -53,10 +53,10 @@ function proxy(options: ProxyOptions): Middleware {
         if ((options.patchRedirects ?? true) && response.headers.location) {
             let locUrl = new URL(response.headers.location)
             if (locUrl.host == patchedUrl.host) {
-                locUrl.host = patchedUrl.host
+                locUrl.host = originalUrl.host
                 response.headers.location = locUrl.toString()
-                log("Patched location",response.headers.location)
-            } log("Not patching location: Redirecting somewhere else!",
+                log("Patched location", response.headers.location)
+            } else log("Not patching location: Redirecting somewhere else!",
                 locUrl.host, patchedUrl.host)
         } log("Not attempting to patch Location")
 
