@@ -10,7 +10,7 @@ function proxy(options: ProxyOptions): Middleware {
         let url = `${ctx.protocol}://${ctx.host}${ctx.url}`;
         if (options) {
             if ("host" in options) {
-                let u = new URL(ctx.url);
+                let u = new URL(url);
                 u.host = options.host;
                 url = u.toString();
             } else {
