@@ -63,7 +63,7 @@ type ProxyOptions = ({
 } | {
     remap: (url: string) => string
 }) & {
-    withoutCloudflareHeaders: boolean
+    withoutCloudflareHeaders?: boolean
 }
 
 export default proxy;
