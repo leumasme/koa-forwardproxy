@@ -4,12 +4,23 @@ import decompress from "inflation";
 import raw from "raw-body";
 
 function proxy(options: ProxyOptions): Middleware {
-    return async function (ctx, next) {
+    return async function (ctx) {
         let body = await raw(decompress(ctx.req));
+
+        let url = ctx.url;
+        if (options) {
+            if ("host" in options) {
+                let u = new URL(ctx.url);
+                u.host = options.host;
+                url = u.toString();
+            } else {
+                url = options.remap(url)
+            }
+        }
 
         let response = await axios({
             method: ctx.method as Method,
-            url: ctx.url,
+            url: url,
             data: body,
             headers: ctx.request.headers
         });
