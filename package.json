@@ -1,6 +1,6 @@
 {
   "name": "koa-forwardproxy",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Forward recieved requests to a different server",
   "main": "build/index.js",
   "types": "build/index.d.ts",
