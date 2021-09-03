@@ -9,7 +9,7 @@ let log = debug("forwardproxy")
 function proxy(options: ProxyOptions): Middleware {
     return async function (ctx) {
         let body = await raw(decompress(ctx.req));
-        
+
         let url = `${ctx.protocol}://${ctx.host}${ctx.url}`;
         log("url-before", url)
         if (options) {
@@ -22,7 +22,7 @@ function proxy(options: ProxyOptions): Middleware {
             }
         }
         log("url-after", url)
-        
+
         let response = await axios({
             method: ctx.method as Method,
             url: url,
@@ -32,9 +32,9 @@ function proxy(options: ProxyOptions): Middleware {
             maxRedirects: 0
         });
 
-        ctx.response.body = response.data;
-        ctx.response.headers = response.headers;
-        ctx.response.status = response.status;
+        ctx.body = response.data;
+        ctx.set(response.headers);
+        ctx.status = response.status;
     }
 }
 
