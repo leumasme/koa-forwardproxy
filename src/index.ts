@@ -55,8 +55,10 @@ function proxy(options: ProxyOptions): Middleware {
             if (locUrl.host == originalUrl.host) {
                 locUrl.host = patchedUrl.host
                 response.headers.location = locUrl.toString()
-            }
-        }
+                log("Patched location",response.headers.location)
+            } log("Not patching location: Redirecting somewhere else!",
+                locUrl.host, originalUrl.host)
+        } log("Not attempting to patch Location")
 
         ctx.body = response.data;
         ctx.set(response.headers);
