@@ -29,28 +29,32 @@ function proxy(options: ProxyOptions): Middleware {
         }
         delete headers["host"]
 
-        let url = `${ctx.protocol}://${ctx.host}${ctx.url}`;
-        log("url-before", url);
-        if (options) {
-            if ("host" in options) {
-                let u = new URL(url);
-                u.host = options.host;
-                url = u.toString();
-            } else {
-                url = options.remap(url)
-            }
+        let originalUrl = new URL(`${ctx.protocol}://${ctx.host}${ctx.url}`)
+        log("url-before", originalUrl);
+        if ("host" in options) {
+            let u = new URL(originalUrl.toString());
+            u.host = options.host;
+            var patchedUrl = u;
+        } else {
+            var patchedUrl = new URL(options.remap(originalUrl.toString()));
         }
-        log("url-after", url);
+        log("url-after", patchedUrl);
+
 
         let response = await axios({
             method: ctx.method as Method,
-            url: url,
+            url: patchedUrl.toString(),
             data: body,
             headers: headers,
             validateStatus: () => true,
             maxRedirects: 0
         });
-        log("response", response);
+
+        if (options.patchRedirects ?? true) {
+            if (response.headers.location == originalUrl.host) {
+                response.headers.location = patchedUrl.host
+            }
+        }
 
         ctx.body = response.data;
         ctx.set(response.headers);
@@ -64,6 +68,7 @@ type ProxyOptions = ({
     remap: (url: string) => string
 }) & {
     withoutCloudflareHeaders?: boolean
+    patchRedirects?: boolean
 }
 
 export default proxy;
