@@ -45,6 +45,7 @@ function proxy(options: ProxyOptions): Middleware {
             }
         }
         delete headers["host"]
+        delete headers["accept-encoding"]
 
         let response = await axios({
             method: ctx.method as Method,
@@ -54,7 +55,7 @@ function proxy(options: ProxyOptions): Middleware {
             validateStatus: () => true,
             maxRedirects: 0
         });
-        log("headers", response.headers)
+        log("headers", response.headers["content-length"], ctx.body.length)
         delete response.headers["content-length"]
 
         if ((options.patchRedirects ?? true) && response.headers.location) {
