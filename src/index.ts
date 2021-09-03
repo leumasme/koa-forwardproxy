@@ -4,14 +4,33 @@ import decompress from "inflation";
 import raw from "raw-body";
 import debug from "debug";
 
-let log = debug("forwardproxy")
+const log = debug("forwardproxy")
+
+const cfHeaders = [
+    "cf-connecting-ip",
+    "true-client-ip",
+    "x-forwarded-for",
+    "cf-ray",
+    "cf-ipcountry",
+    "cf-visitor",
+    "cdn-loop",
+    "cf-worker"
+]
 
 function proxy(options: ProxyOptions): Middleware {
     return async function (ctx) {
         let body = await raw(decompress(ctx.req));
+        let headers = { ...ctx.headers };
+
+        if (options.withoutCloudflareHeaders) {
+            for (const h of cfHeaders) {
+                delete headers[h];
+            }
+        }
+        delete headers["host"]
 
         let url = `${ctx.protocol}://${ctx.host}${ctx.url}`;
-        log("url-before", url)
+        log("url-before", url);
         if (options) {
             if ("host" in options) {
                 let u = new URL(url);
@@ -21,7 +40,7 @@ function proxy(options: ProxyOptions): Middleware {
                 url = options.remap(url)
             }
         }
-        log("url-after", url)
+        log("url-after", url);
 
         let response = await axios({
             method: ctx.method as Method,
@@ -31,7 +50,7 @@ function proxy(options: ProxyOptions): Middleware {
             validateStatus: () => true,
             maxRedirects: 0
         });
-        log("response", response)
+        log("response", response);
 
         ctx.body = response.data;
         ctx.set(response.headers);
@@ -39,11 +58,13 @@ function proxy(options: ProxyOptions): Middleware {
     }
 }
 
-type ProxyOptions = {
+type ProxyOptions = ({
     host: string
 } | {
     remap: (url: string) => string
+}) & {
+    withoutCloudflareHeaders: boolean
 }
 
-export default proxy
-module.exports = proxy
+export default proxy;
+module.exports = proxy;
