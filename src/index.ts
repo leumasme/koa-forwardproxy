@@ -45,6 +45,7 @@ function proxy(options: ProxyOptions): Middleware {
             }
         }
         delete headers["host"]
+        delete headers["content-length"]
 
         let response = await axios({
             method: ctx.method as Method,
@@ -63,7 +64,7 @@ function proxy(options: ProxyOptions): Middleware {
                 log("Patched location", response.headers.location)
             } else log("Not patching location: Redirecting somewhere else!",
                 locUrl.host, patchedUrl.host)
-        } else log("Not attempting to patch Location")
+        }
 
         ctx.body = response.data;
         ctx.set(response.headers);
