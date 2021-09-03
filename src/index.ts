@@ -30,7 +30,7 @@ function proxy(options: ProxyOptions): Middleware {
         delete headers["host"]
 
         let originalUrl = new URL(`${ctx.protocol}://${ctx.host}${ctx.url}`)
-        log("url-before", originalUrl);
+        log("url-before", originalUrl.toString());
         if ("host" in options) {
             let u = new URL(originalUrl.toString());
             u.host = options.host;
@@ -38,7 +38,7 @@ function proxy(options: ProxyOptions): Middleware {
         } else {
             var patchedUrl = new URL(options.remap(originalUrl.toString()));
         }
-        log("url-after", patchedUrl);
+        log("url-after", patchedUrl.toString());
 
 
         let response = await axios({
@@ -50,9 +50,11 @@ function proxy(options: ProxyOptions): Middleware {
             maxRedirects: 0
         });
 
-        if (options.patchRedirects ?? true) {
-            if (response.headers.location == originalUrl.host) {
-                response.headers.location = patchedUrl.host
+        if ((options.patchRedirects ?? true) && response.headers.location) {
+            let locUrl = new URL(response.headers.location)
+            if (locUrl.host == originalUrl.host) {
+                locUrl.host = patchedUrl.host
+                response.headers.location = locUrl.toString()
             }
         }
 
