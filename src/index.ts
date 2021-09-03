@@ -46,7 +46,7 @@ function proxy(options: ProxyOptions): Middleware {
             method: ctx.method as Method,
             url: url,
             data: body,
-            headers: ctx.request.headers,
+            headers: headers,
             validateStatus: () => true,
             maxRedirects: 0
         });
