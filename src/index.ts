@@ -55,7 +55,7 @@ function proxy(options: ProxyOptions): Middleware {
             validateStatus: () => true,
             maxRedirects: 0
         });
-        log("headers", response.headers["content-length"], ctx.body.length)
+        log("headers", response.headers["content-length"], response.data.length)
         delete response.headers["content-length"]
 
         if ((options.patchRedirects ?? true) && response.headers.location) {
