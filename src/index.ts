@@ -45,7 +45,6 @@ function proxy(options: ProxyOptions): Middleware {
             }
         }
         delete headers["host"]
-        delete headers["content-length"]
 
         let response = await axios({
             method: ctx.method as Method,
@@ -55,6 +54,8 @@ function proxy(options: ProxyOptions): Middleware {
             validateStatus: () => true,
             maxRedirects: 0
         });
+        log("headers", response.headers)
+        delete response.headers["content-length"]
 
         if ((options.patchRedirects ?? true) && response.headers.location) {
             let locUrl = new URL(response.headers.location)
