@@ -22,7 +22,9 @@ function proxy(options: ProxyOptions): Middleware {
             method: ctx.method as Method,
             url: url,
             data: body,
-            headers: ctx.request.headers
+            headers: ctx.request.headers,
+            validateStatus: () => true,
+            maxRedirects: 0
         });
 
         ctx.response.body = response.data;
