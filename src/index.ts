@@ -7,7 +7,7 @@ function proxy(options: ProxyOptions): Middleware {
     return async function (ctx) {
         let body = await raw(decompress(ctx.req));
 
-        let url = ctx.url;
+        let url = `${ctx.protocol}://${ctx.host}${ctx.url}`;
         if (options) {
             if ("host" in options) {
                 let u = new URL(ctx.url);
