@@ -45,7 +45,6 @@ function proxy(options: ProxyOptions): Middleware {
             }
         }
         delete headers["host"]
-        delete headers["accept-encoding"]
 
         let response = await axios({
             method: ctx.method as Method,
