@@ -40,7 +40,9 @@ function proxy(options: ProxyOptions): Middleware {
             try {
                 let cfvisotor = JSON.parse(ctx.request.headers["cf-visitor"] as string);
                 patchedUrl.protocol = JSON.parse(cfvisotor).scheme + ":"
-            } catch {}
+            } catch (e) {
+                log("cf-visitor", e)
+            }
         }
         delete headers["host"]
 
@@ -61,7 +63,7 @@ function proxy(options: ProxyOptions): Middleware {
                 log("Patched location", response.headers.location)
             } else log("Not patching location: Redirecting somewhere else!",
                 locUrl.host, patchedUrl.host)
-        } log("Not attempting to patch Location")
+        } else log("Not attempting to patch Location")
 
         ctx.body = response.data;
         ctx.set(response.headers);
