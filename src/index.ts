@@ -22,13 +22,6 @@ function proxy(options: ProxyOptions): Middleware {
         let body = await raw(decompress(ctx.req));
         let headers = { ...ctx.headers };
 
-        if (options.withoutCloudflareHeaders) {
-            for (const h of cfHeaders) {
-                delete headers[h];
-            }
-        }
-        delete headers["host"]
-
         let originalUrl = new URL(`${ctx.protocol}://${ctx.host}${ctx.url}`)
         log("url-before", originalUrl.toString());
         if ("host" in options) {
@@ -40,6 +33,16 @@ function proxy(options: ProxyOptions): Middleware {
         }
         log("url-after", patchedUrl.toString());
 
+        if (options.usesCloudflare) {
+            for (const h of cfHeaders) {
+                delete headers[h];
+            }
+            try {
+                let cfvisotor = JSON.parse(ctx.request.headers["cf-visitor"] as string);
+                patchedUrl.protocol = JSON.parse(cfvisotor).scheme + ":"
+            } catch {}
+        }
+        delete headers["host"]
 
         let response = await axios({
             method: ctx.method as Method,
@@ -71,7 +74,7 @@ type ProxyOptions = ({
 } | {
     remap: (url: string) => string
 }) & {
-    withoutCloudflareHeaders?: boolean
+    usesCloudflare?: boolean
     patchRedirects?: boolean
 }
 
