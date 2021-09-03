@@ -31,6 +31,7 @@ function proxy(options: ProxyOptions): Middleware {
             validateStatus: () => true,
             maxRedirects: 0
         });
+        log("response", response)
 
         ctx.body = response.data;
         ctx.set(response.headers);
