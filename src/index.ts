@@ -41,7 +41,7 @@ function proxy(options: ProxyOptions): Middleware {
                 let cfvisotor = JSON.parse(ctx.request.headers["cf-visitor"] as string);
                 patchedUrl.protocol = JSON.parse(cfvisotor).scheme + ":"
             } catch (e) {
-                log("cf-visitor", e)
+                log("cf-visitor", ctx.request.headers["cf-visitor"], e)
             }
         }
         delete headers["host"]
