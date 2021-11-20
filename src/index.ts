@@ -61,7 +61,8 @@ function proxy(options: ProxyOptions): Middleware {
             data: body,
             headers: headers,
             validateStatus: () => true,
-            maxRedirects: 0
+            maxRedirects: 0,
+            responseType: "arraybuffer"
         });
         log("response", response.status, response.headers["content-length"], response.data.length)
         log("data(hex)", response.data.toString("hex").substr(0, 100))
