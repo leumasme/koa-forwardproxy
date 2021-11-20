@@ -17,6 +17,15 @@ const cfHeaders = [
     "cf-worker"
 ]
 
+type ProxyOptions = ({
+    host: string
+} | {
+    remap: (url: string) => string
+}) & {
+    usesCloudflare?: boolean
+    patchRedirects?: boolean
+}
+
 function proxy(options: ProxyOptions): Middleware {
     return async function (ctx) {
         let body = await raw(decompress(ctx.req));
@@ -54,7 +63,8 @@ function proxy(options: ProxyOptions): Middleware {
             validateStatus: () => true,
             maxRedirects: 0
         });
-        log("headers", response.headers["content-length"], response.data.length)
+        log("response", response.status, response.headers["content-length"], response.data.length)
+        log("data(hex)", response.data.toString("hex").substr(0, 100))
         delete response.headers["content-length"]
 
         if ((options.patchRedirects ?? true) && response.headers.location) {
@@ -71,15 +81,6 @@ function proxy(options: ProxyOptions): Middleware {
         ctx.set(response.headers);
         ctx.status = response.status;
     }
-}
-
-type ProxyOptions = ({
-    host: string
-} | {
-    remap: (url: string) => string
-}) & {
-    usesCloudflare?: boolean
-    patchRedirects?: boolean
 }
 
 export default proxy;
